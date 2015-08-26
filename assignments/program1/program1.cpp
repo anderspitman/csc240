@@ -1,48 +1,167 @@
+/* 
+ * Anders Pitman - Program 1
+ */
+
 #include <iostream>
 
 using namespace std;
 
+class Entry {
+    private:
+        string heading;
+
+    protected:
+        void setHeading(string heading) {
+            this->heading = heading;
+        }
+
+    public:
+        string getHeading() {
+            return heading;
+        }
+
+        virtual void print() {};
+
+        static Entry* makeEntry(string heading, string paragraph);
+        static Entry* makeEntry(string heading, string* list, int len);
+};
+
+
+class ParagraphEntry: public Entry {
+    private:
+        string paragraph;
+
+    public:
+        ParagraphEntry(string heading, string paragraph) {
+            this->setHeading(heading);
+            this->paragraph = paragraph;
+        }
+        void print() {
+            int column = 0;
+            cout << this->getHeading() << endl;
+
+            cout << "  ";
+            for (int i=0; i<this->paragraph.length(); i++) {
+                cout << this->paragraph[i];
+                column++;
+                if (column > 77) {
+                    column = 0;
+                    cout << endl << "  ";
+                }
+            }
+            cout << endl;
+        }
+};
+
+
+class ListEntry: public Entry {
+    private:
+        string* list;
+        int len;
+
+    public:
+        ListEntry(string heading, string* list, int len) {
+            this->setHeading(heading);
+            this->list = list;
+            this->len = len;
+        }
+        void print() {
+            cout << this->getHeading() << endl;
+
+            for (int i=0; i<len; i++) {
+                cout << "  " << this->list[i] << endl;
+            }
+        }
+};
+
+
+Entry* Entry::makeEntry(string heading, string paragraph) {
+    return new ParagraphEntry(heading, paragraph);
+}
+
+Entry* Entry::makeEntry(string heading, string* list, int len) {
+    return new ListEntry(heading, list, len);
+}
+
+
+class EntryManager {
+    private:
+        Entry **entries;
+        int index;
+
+    public:
+        EntryManager(int size) {
+            entries = new Entry*[size];
+            index = 0;
+        }
+
+        void addEntry(Entry *entry) {
+            entries[index] = entry;
+            index++;
+        }
+
+        void printAll() {
+            for (int i=0; i<index; i++) {
+                entries[i]->print();
+            }
+        }
+};
+
+
 int main() {
-    cout << "Name:" << endl;
-    cout << "  Anders Pitman" << endl;
+    EntryManager em(10);
 
-    cout << "Prior CS Coursework:" << endl;
-    cout << "  CSC110 (Zerange)" << endl;
-    cout << "  CSC205 (Heil)" << endl;
-    cout << "  Bioinformatics Algorithms 1 (Coursera MOOC)" << endl;
-    cout << "  Functional Programming Prin. in Scala (Coursera MOOC)" << endl;
+    em.addEntry(Entry::makeEntry("Name:", "Anders Pitman"));
 
-    cout << "Professional Background:" << endl;
-    cout << "  6 years software engineering experience. 2 in" << endl;
-    cout << "  avionics, 3 in telecom, and 1 in bioinformatics" << endl;
+    const int LEN_COURSEWORK = 4;
+    string coursework[LEN_COURSEWORK] = {
+        "CSC110 (Zerange)",
+        "CSC205 (Heil)",
+        "Bioinformatics Algorithms 1 (Coursera MOOC)",
+        "Functional Programming Prin. in Scala (Coursera MOOC)"
+    };
+    em.addEntry(Entry::makeEntry("Prior CS Coursework:", coursework,
+                                 LEN_COURSEWORK));
 
-    cout << "Other computer experience:" << endl;
-    cout << "  Sometimes do PC builds." << endl;
+    string prof = "6 years software engineering experience. 2 in avionics"
+                  ", 3 in telecom, and 1 in bioinformatics";
+    em.addEntry(Entry::makeEntry("Professional Background:", prof));
 
-    cout << "Programming Environment:" << endl;
-    cout << "  Linux + VIM + Makefiles + gcc." << endl;
+    string other_exp = "Sometimes do PC builds.";
+    em.addEntry(Entry::makeEntry("Other computer experience:", other_exp));
 
-    cout << "Languages:" << endl;
-    cout << "  C, C++, Python, JavaScript, Scala, Rust, Go, HTML, CSS" << endl;
-    cout << "  Ada, Scheme. Probably forgetting 1 or 2." << endl;
+    const int LEN_ENV = 5;
+    string environment[LEN_ENV] = {"Linux", "VIM", "git", "Makefiles", "gcc"};
+    em.addEntry(Entry::makeEntry("Programming Environment:", environment,
+                                 LEN_ENV));
 
-    cout << "Goals for course:" << endl;
-    cout << "  Fulfill prereq and have fun learning! Especially" << endl;
-    cout << "  looking foward to digging into Lisp some more." << endl;
+    const int LEN_LANGUAGES = 11;
+    string languages[LEN_LANGUAGES] = {"C", "C++", "Python", "JavaScript",
+                                       "Scala", "Rust", "Go", "HTML", "CSS",
+                                       "Ada", "Scheme"};
+    em.addEntry(Entry::makeEntry("Languages:", languages, LEN_LANGUAGES));
 
-    cout << "Concerns:" << endl;
-    cout << "  Nada." << endl;
+    string goals = "I want to fulfill this prereq and have fun learning! "
+                   "I'm especially looking foward to digging into Lisp some"
+                   "more.";
+    em.addEntry(Entry::makeEntry("Personal Goals:", goals));
 
-    cout << "Other classes:" << endl;
-    cout << "  ECE102 and ECE103." << endl;
+    em.addEntry(Entry::makeEntry("Concerns:", "Nada"));
 
-    cout << "Favoriate Program I've Written:" << endl;
-    cout << "  At my last job I made a plotting framework" << endl;
-    cout << "  in C and Python that enabled us to visualize wireless" << endl;
-    cout << "  channels in real time. It was pretty cool." << endl;
+    em.addEntry(Entry::makeEntry("Other courses:", "ECE102 and ECE103."));
 
-    cout << "Personal Interest:" << endl;
-    cout << "  I love hiking, reading, playing fiddle and guitar." << endl;
+    string fav_program = "At my last job I made a plotting framework"
+                         "in C and Python that enabled us to visualize"
+                         "wireless channels in real time. It was pretty cool.";
+    em.addEntry(Entry::makeEntry("Favoriate Program Written:", fav_program));
+
+    const int LEN_INTERESTS = 4;
+    string interests[LEN_INTERESTS] = {"hiking", "reading", "fiddle",
+                                       "guitar"};
+    em.addEntry(Entry::makeEntry("Personal Interests:", interests,
+                                 LEN_INTERESTS));
+
+    em.printAll();
 
     return 0;
 }
