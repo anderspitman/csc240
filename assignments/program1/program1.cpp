@@ -6,13 +6,12 @@
 
 #include "printer.hpp"
 
-Printer printer;
-
 using namespace std;
 
 class Entry {
     private:
         string heading;
+        Printer printer;
 
     protected:
         void setHeading(string heading) {
@@ -20,6 +19,10 @@ class Entry {
         }
 
     public:
+        Printer getPrinter() {
+            return printer;
+        }
+
         string getHeading() {
             return heading;
         }
@@ -34,6 +37,7 @@ class Entry {
 class ParagraphEntry: public Entry {
     private:
         string paragraph;
+        Printer printer;
 
     public:
         ParagraphEntry(string heading, string paragraph) {
@@ -45,7 +49,7 @@ class ParagraphEntry: public Entry {
             cout << this->getHeading() << endl;
 
             cout << "  ";
-            printer.printWrap(this->paragraph, 2);
+            getPrinter().printWrap(this->paragraph, 2);
             cout << endl;
         }
 };
@@ -65,8 +69,9 @@ class ListEntry: public Entry {
         void print() {
             cout << this->getHeading() << endl;
 
+            cout << "  ";
             for (int i=0; i<len; i++) {
-                cout << "  " << this->list[i] << endl;
+                getPrinter().printWrap(this->list[i], 2);
             }
             cout << endl;
         }
