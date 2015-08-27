@@ -18,11 +18,11 @@ class Entry {
             this->heading = heading;
         }
 
-    public:
         Printer getPrinter() {
             return printer;
         }
 
+    public:
         string getHeading() {
             return heading;
         }
