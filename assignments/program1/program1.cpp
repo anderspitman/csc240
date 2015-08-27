@@ -4,6 +4,10 @@
 
 #include <iostream>
 
+#include "printer.hpp"
+
+Printer printer;
+
 using namespace std;
 
 class Entry {
@@ -41,14 +45,7 @@ class ParagraphEntry: public Entry {
             cout << this->getHeading() << endl;
 
             cout << "  ";
-            for (int i=0; i<this->paragraph.length(); i++) {
-                cout << this->paragraph[i];
-                column++;
-                if (column > 77) {
-                    column = 0;
-                    cout << endl << "  ";
-                }
-            }
+            printer.printWrap(this->paragraph, 2);
             cout << endl;
         }
 };
@@ -71,6 +68,7 @@ class ListEntry: public Entry {
             for (int i=0; i<len; i++) {
                 cout << "  " << this->list[i] << endl;
             }
+            cout << endl;
         }
 };
 
@@ -109,6 +107,7 @@ class EntryManager {
 
 
 int main() {
+
     EntryManager em(10);
 
     em.addEntry(Entry::makeEntry("Name:", "Anders Pitman"));
