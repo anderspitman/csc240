@@ -19,6 +19,9 @@ CFLAGS := -g -Wall
 LIB :=
 INC := -I include
 
+run: $(TARGET)
+	$(TARGET)
+
 $(TARGET): $(OBJECTS)
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
