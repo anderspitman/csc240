@@ -1,5 +1,6 @@
 #include "catch.hpp"
+#include "program4.hpp"
 
 TEST_CASE( "Dummy test", "[tags?]" ) {
-    REQUIRE( true == true );
+    REQUIRE( dummyFunc() == true );
 }

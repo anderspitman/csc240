@@ -34,14 +34,17 @@
 (define (UHF_LOWER) (VHF_UPPER))
 (define (UHF_UPPER) 2009.0)
 
+(define (OUT_OF_RANGE) "FREQUENCY OUT OF RANGE")
+
 (define (classifyFrequency frequency)
-  (cond ((inRange frequency (VLF_LOWER) (VLF_UPPER)) "VLF")
-        ((inRange frequency (LF_LOWER) (LF_UPPER)) "LF")
-        ((inRange frequency (MF_LOWER) (MF_UPPER)) "MF")
-        ((inRange frequency (HF_LOWER) (HF_UPPER)) "HF")
-        ((inRange frequency (VHF_LOWER) (VHF_UPPER)) "VHF")
-        ((inRange frequency (UHF_LOWER) (UHF_UPPER)) "UHF")
-        (#t "FREQUENCY OUT OF RANGE")
+  (cond ((< frequency (VLF_LOWER)) (OUT_OF_RANGE))
+        ((< frequency (VLF_UPPER)) "VLF")
+        ((< frequency (LF_UPPER)) "LF")
+        ((< frequency (MF_UPPER)) "MF")
+        ((< frequency (HF_UPPER)) "HF")
+        ((< frequency  (VHF_UPPER)) "VHF")
+        ((< frequency  (UHF_UPPER)) "UHF")
+        (#t (OUT_OF_RANGE))
         ))
 
 ; (3)
@@ -85,7 +88,8 @@
         ))
 
 ; you can ignore this. it's for unit testing in racket
-(provide calcOvertimePay
+(provide classifyFrequency
+         calcOvertimePay
          calcSimplePay
          overtimeRate
          computeHourlyPay

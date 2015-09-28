@@ -32,7 +32,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
 
-$(TEST_TARGET): $(TEST_OBJECTS)
+$(TEST_TARGET): $(TEST_OBJECTS) $(OBJECTS)
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TEST_TARGET) $(LIB)"; $(CC) $^ -o $(TEST_TARGET) $(LIB)
 

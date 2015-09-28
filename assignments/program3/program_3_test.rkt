@@ -3,6 +3,32 @@
 (require rackunit
          "program_3.rkt")
 
+; Out of range
+(check-equal? (classifyFrequency 0.0099) "FREQUENCY OUT OF RANGE" "Too low")
+(check-equal? (classifyFrequency 2009.0) "FREQUENCY OUT OF RANGE" "Too high")
+; VLF
+(check-equal? (classifyFrequency 0.01) "VLF" "Lower bound")
+(check-equal? (classifyFrequency 0.0299) "VLF" "Upper bound")
+; LF
+(check-equal? (classifyFrequency 0.03) "LF" "Lower bound")
+(check-equal? (classifyFrequency 0.299) "LF" "Upper bound")
+; MF
+(check-equal? (classifyFrequency 0.3) "MF" "Lower bound")
+(check-equal? (classifyFrequency 2.99) "MF" "Upper bound")
+; HF
+(check-equal? (classifyFrequency 3.0) "HF" "Lower bound")
+(check-equal? (classifyFrequency 29.9) "HF" "Upper bound")
+; VHF
+(check-equal? (classifyFrequency 30.0) "VHF" "Lower bound")
+(check-equal? (classifyFrequency 328.59) "VHF" "Upper bound")
+; UHF
+(check-equal? (classifyFrequency 328.6) "UHF" "Lower bound")
+(check-equal? (classifyFrequency 2008.99) "UHF" "Upper bound")
+
+
+
+
+
 ; overtimeRate
 (check-equal? (overtimeRate 13) 19.5 "Simple rate")
 
