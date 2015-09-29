@@ -14,6 +14,7 @@ const double LAT_LON_MIN = -180.0f;
 const double LAT_LON_MAX = 180.0f;
 const double PI = 3.14159f;
 const double EARTH_RADIUS_MILES = 3960.0f;
+const char HEMI_INIT = 'n';
 
 enum MainOption {
     OPTION_BASIC_CALCULATIONS = 1,
@@ -33,9 +34,11 @@ enum BasicCalcOption {
 
 void phase1();
 void handleLocationToDegrees();
+void getPositionFromUser(double &degrees, double &minutes, double &seconds,
+                         char &hemisphere, string whatFor);
 int getIntegerInRangeFromUser(int lowerBound, int upperBound,
                               string promptMessage);
-char getHemisphereFromUser();
+char getHemisphereFromUser(string prompt);
 double computeLocationToDegrees(int degrees, int minutes, int seconds,
                                 char hemisphere);
 void handleLatLonToDimensional();
@@ -50,6 +53,15 @@ double computeDotProduct(double x1, double y1, double z1, double x2,
 void handleNorm();
 double computeNorm(double x, double y, double z);
 
+void handleDistanceBetweenTwoPoints();
+double distanceBetweenTwoPointsLatLon(double pointALat, double pointALon,
+                                      double pointBLat, double pointBLon);
+
+double distanceBetweenTwoPoints(
+    int degreesALat, int minutesALat, int secondsALat, char hemisphereALat,
+    int degreesALon, int minutesALon, int secondsALon, char hemisphereALon,
+    int degreesBLat, int minutesBLat, int secondsBLat, char hemisphereBLat,
+    int degreesBLon, int minutesBLon, int secondsBLon, char hemisphereBLon);
 
 int main(int argc, char **argv) {
     int option = OPTION_STOP;
@@ -75,6 +87,7 @@ int main(int argc, char **argv) {
                 phase1();
                 break;
             case OPTION_DISTANCE_BETWEEN_POINTS:
+                handleDistanceBetweenTwoPoints();
                 break;
             case OPTION_TRIP_DISTANCE:
                 break;
@@ -135,13 +148,11 @@ void phase1() {
 }
 
 void handleLocationToDegrees() {
-    int degrees = getIntegerInRangeFromUser(DEGREES_MIN, DEGREES_MAX,
-                                            "Enter the degrees:");
-    int minutes = getIntegerInRangeFromUser(MINUTES_MIN, MINUTES_MAX,
-                                            "Enter the minutes:");
-    int seconds = getIntegerInRangeFromUser(SECONDS_MIN, SECONDS_MAX,
-                                            "Enter the seconds:");
-    char hemisphere = getHemisphereFromUser();
+    double degrees = 0.0f;
+    double minutes = 0.0f;
+    double seconds = 0.0f;
+    char hemisphere = 'n';
+    getPositionFromUser(degrees, minutes, seconds, hemisphere, "position");
 
     double degreesTotal = computeLocationToDegrees(degrees, minutes, seconds,
                                                    hemisphere);
@@ -163,8 +174,8 @@ int getIntegerInRangeFromUser(int lowerBound, int upperBound,
     return input;
 }
 
-char getHemisphereFromUser() {
-    cout << "Enter the hemisphere:" << endl;
+char getHemisphereFromUser(string prompt) {
+    cout << prompt << endl;
     cout << "(n) North" << endl
          << "(s) South" << endl
          << "(e) East" << endl
@@ -181,7 +192,7 @@ char getHemisphereFromUser() {
 }
 
 double computeLocationToDegrees(int degrees, int minutes, int seconds,
-                             char hemisphere) {
+                                char hemisphere) {
     double minutesInDegrees = double(minutes) / 60.0f;
     double secondsInDegrees = double(seconds) / 3600.0f;
     double degreesTotal =
@@ -269,4 +280,108 @@ void handleNorm() {
 
 double computeNorm(double x, double y, double z) {
     return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+}
+
+void getPositionFromUser(double &degrees, double &minutes, double &seconds,
+                         char &hemisphere, string whatFor) {
+    string whatForInsert = "";
+    if (!whatFor.empty()) {
+    whatForInsert += (" for " + whatFor);
+    }
+
+    string prompt = "";
+
+    prompt = "Enter degrees" + whatForInsert + ":";
+    degrees = getIntegerInRangeFromUser(DEGREES_MIN, DEGREES_MAX, prompt);
+    prompt = "Enter minutes" + whatForInsert + ":";
+    minutes = getIntegerInRangeFromUser(DEGREES_MIN, DEGREES_MAX, prompt);
+    prompt = "Enter seconds" + whatForInsert + ":";
+    seconds = getIntegerInRangeFromUser(DEGREES_MIN, DEGREES_MAX, prompt);
+    prompt = "Enter hemisphere" + whatForInsert + ":";
+    hemisphere = getHemisphereFromUser(prompt);
+}
+
+void handleDistanceBetweenTwoPoints() {
+    cout << "You will enter latitude and longitude 2 points (A and B):"
+         << endl;
+
+    string prompt = "";
+
+    double degreesALat = 0.0;
+    double minutesALat = 0.0;
+    double secondsALat = 0.0;
+    char hemisphereALat = HEMI_INIT;
+    getPositionFromUser(degreesALat, minutesALat, secondsALat,
+                        hemisphereALat, "point A latitude");
+
+    double degreesALon = 0.0;
+    double minutesALon = 0.0;
+    double secondsALon = 0.0;
+    char hemisphereALon = HEMI_INIT;
+    getPositionFromUser(degreesALon, minutesALon, secondsALon,
+                        hemisphereALon, "point A longitude");
+
+    double degreesBLat = 0.0;
+    double minutesBLat = 0.0;
+    double secondsBLat = 0.0;
+    char hemisphereBLat = HEMI_INIT;
+    getPositionFromUser(degreesBLat, minutesBLat, secondsBLat,
+                        hemisphereBLat, "point B latitude");
+
+    double degreesBLon = 0.0;
+    double minutesBLon = 0.0;
+    double secondsBLon = 0.0;
+    char hemisphereBLon = HEMI_INIT;
+    getPositionFromUser(degreesBLon, minutesBLon, secondsBLon,
+                        hemisphereBLon, "point B longitude");
+
+
+    double distanceBetween = distanceBetweenTwoPoints(
+        degreesALat, minutesALat, secondsALat, hemisphereALat,
+        degreesALon, minutesALon, secondsALon, hemisphereALon,
+        degreesBLat, minutesBLat, secondsBLat, hemisphereBLat,
+        degreesBLon, minutesBLon, secondsBLon, hemisphereBLon);
+
+    cout << "Distance: " << distanceBetween << " miles" << endl << endl;
+}
+
+double distanceBetweenTwoPointsLatLon(double pointALat, double pointALon,
+                                      double pointBLat, double pointBLon) {
+    double aX = 0.0;
+    double aY = 0.0;
+    double aZ = 0.0;
+    computeLatLonToDimensional(pointALat, pointALon, aX, aY, aZ);
+    double normA = computeNorm(aX, aY, aZ);
+
+    double bX = 0.0;
+    double bY = 0.0;
+    double bZ = 0.0;
+    computeLatLonToDimensional(pointBLat, pointBLon, bX, bY, bZ);
+    double normB = computeNorm(bX, bY, bZ);
+
+    double dotProduct = computeDotProduct(aX, aY, aZ, bX, bY, bZ);
+
+    double greatCircleAngleRadians = acos(dotProduct / (normA * normB));
+
+    double distanceMiles = EARTH_RADIUS_MILES * greatCircleAngleRadians;
+    return distanceMiles;
+}
+
+double distanceBetweenTwoPoints(
+    int degreesALat, int minutesALat, int secondsALat, char hemisphereALat,
+    int degreesALon, int minutesALon, int secondsALon, char hemisphereALon,
+    int degreesBLat, int minutesBLat, int secondsBLat, char hemisphereBLat,
+    int degreesBLon, int minutesBLon, int secondsBLon, char hemisphereBLon) {
+
+    double aLat = computeLocationToDegrees(degreesALat, minutesALat,
+                                           secondsALat, hemisphereALat);
+    double aLon = computeLocationToDegrees(degreesALon, minutesALon,
+                                           secondsALon, hemisphereALon);
+    double bLat = computeLocationToDegrees(degreesBLat, minutesBLat,
+                                           secondsBLat, hemisphereBLat);
+    double bLon = computeLocationToDegrees(degreesBLon, minutesBLon,
+                                           secondsBLon, hemisphereBLon);
+    double distanceBetween = distanceBetweenTwoPointsLatLon(aLat, aLon, bLat,
+                                                            bLon);
+    return distanceBetween;
 }
