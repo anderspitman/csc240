@@ -19,6 +19,7 @@ enum Option {
     OPTION_LOCATION_TO_DEGRESS = 1,
     OPTION_LAT_LON_TO_DIMENSIONAL = 2,
     OPTION_DOT_PRODUCT = 3,
+    OPTION_NORM = 4,
     OPTION_STOP = 5
 };
 
@@ -38,25 +39,29 @@ void handleDotProduct();
 double getNumberFromUser(string promptMessage);
 double computeDotProduct(double x1, double y1, double z1, double x2,
                          double y2, double z2);
+void handleNorm();
 
 
 int main(int argc, char **argv) {
     int option = OPTION_STOP;
     do {
         cout << "Enter an integer to choose an option:" << endl;
-        cout << "(" << OPTION_LOCATION_TO_DEGRESS << ") "
-             << "Convert from degrees-minutes-seconds-hemisphere to degrees"
+        cout << "(" << OPTION_LOCATION_TO_DEGRESS << ")"
+             << " Convert from degrees-minutes-seconds-hemisphere to degrees"
              << endl;
-        cout << "(" << OPTION_LAT_LON_TO_DIMENSIONAL << ") "
-             << "Convert latitude-longitude to three dimensional coordinates"
+        cout << "(" << OPTION_LAT_LON_TO_DIMENSIONAL << ")"
+             << " Convert latitude-longitude to three dimensional coordinates"
              << "(x-y-z)" << endl;
-        cout << "(" << OPTION_DOT_PRODUCT << ") "
-             << "Compute the dot-product of two three-dimensional points"
+        cout << "(" << OPTION_DOT_PRODUCT << ")"
+             << " Compute the dot-product of two three-dimensional points"
              << endl;
-        cout << "(4) " << endl
-             << "(" << OPTION_STOP << ") "
-             << "Stop the program" << endl;
+        cout << "(" << OPTION_NORM << ")"
+             << " Compute the norm of a three-dimensional point"
+             << endl;
+        cout << "(" << OPTION_STOP << ")"
+             << " Stop the program" << endl;
         cin >> option;
+        cout << endl;
 
         switch (option) {
             case OPTION_LOCATION_TO_DEGRESS:
@@ -67,6 +72,9 @@ int main(int argc, char **argv) {
                 break;
             case OPTION_DOT_PRODUCT:
                 handleDotProduct();
+                break;
+            case OPTION_NORM:
+                handleNorm();
                 break;
             case OPTION_STOP:
                 cout << "Stopping program" << endl;
@@ -92,7 +100,7 @@ void handleLocationToDegrees() {
     double degreesTotal = computeLocationToDegrees(degrees, minutes, seconds,
                                                    hemisphere);
 
-    cout << "Answer in degrees: " << degreesTotal << endl;
+    cout << "Answer in degrees: " << degreesTotal << endl << endl;
 }
 
 int getIntegerInRangeFromUser(int lowerBound, int upperBound,
@@ -140,16 +148,18 @@ double computeLocationToDegrees(int degrees, int minutes, int seconds,
 
 void handleLatLonToDimensional() {
     double latitude = getNumberInRangeFromUser(LAT_LON_MIN, LAT_LON_MAX,
-                                               "Enter the latitude");
+                                               "Enter the latitude:");
     double longitude = getNumberInRangeFromUser(LAT_LON_MIN, LAT_LON_MAX,
-                                                "Enter the longitude");
+                                                "Enter the longitude:");
     double x = 0.0f;
     double y = 0.0f;
     double z = 0.0f;
     computeLatLonToDimensional(latitude, longitude, x, y, z);
-    cout << x << endl;
-    cout << y << endl;
-    cout << z << endl;
+    cout << endl;
+    cout << "3-dimensional coordinates:" << endl;
+    cout << "x: " << x << endl;
+    cout << "y: " << y << endl;
+    cout << "z: " << z << endl << endl;
 }
 
 double getNumberInRangeFromUser(double lowerBound, double upperBound,
@@ -200,4 +210,13 @@ double getNumberFromUser(string promptMessage) {
 double computeDotProduct(double x1, double y1, double z1, double x2,
                          double y2, double z2) {
     return x1*x2 + y1*y2 + z1*z2;
+}
+
+void handleNorm() {
+    cout << "You will endter a single point (x, y, z)" << endl;
+    double x = getNumberFromUser("Enter x:");
+    double y = getNumberFromUser("Enter y:");
+    double z = getNumberFromUser("Enter z:");
+    double norm = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+    cout << "Norm: " << norm << endl << endl;
 }

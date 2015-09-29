@@ -15,7 +15,7 @@ TEST_BUILD_DIR := $(TEST_DIR)/build
 TEST_SOURCES := $(shell find $(TEST_DIR) -type f -name *.$(SRCEXT))
 TEST_OBJECTS := $(patsubst $(TEST_DIR)/%,$(TEST_BUILD_DIR)/%,$(TEST_SOURCES:.$(SRCEXT)=.o))
 
-CFLAGS := -g -Wall
+CFLAGS := -Wall -Werror -std=c++11
 LIB :=
 INC := -I include
 
