@@ -15,12 +15,19 @@ const double LAT_LON_MAX = 180.0f;
 const double PI = 3.14159f;
 const double EARTH_RADIUS_MILES = 3960.0f;
 
-enum Option {
+enum MainOption {
+    OPTION_BASIC_CALCULATIONS = 1,
+    OPTION_DISTANCE_BETWEEN_POINTS = 2,
+    OPTION_TRIP_DISTANCE = 3,
+    OPTION_STOP = 4,
+};
+
+enum BasicCalcOption {
     OPTION_LOCATION_TO_DEGRESS = 1,
     OPTION_LAT_LON_TO_DIMENSIONAL = 2,
     OPTION_DOT_PRODUCT = 3,
     OPTION_NORM = 4,
-    OPTION_STOP = 5
+    OPTION_MAIN_MENU = 5,
 };
 
 
@@ -40,9 +47,49 @@ double getNumberFromUser(string promptMessage);
 double computeDotProduct(double x1, double y1, double z1, double x2,
                          double y2, double z2);
 void handleNorm();
+void phase1();
 
 
 int main(int argc, char **argv) {
+    int option = OPTION_STOP;
+    do {
+        cout << "Enter an integer to choose an option:" << endl;
+        cout << "(" << OPTION_BASIC_CALCULATIONS << ")"
+             << " Basic Calculations"
+             << endl;
+        cout << "(" << OPTION_DISTANCE_BETWEEN_POINTS << ")"
+             << " Compute the distance between two points"
+             << endl;
+        cout << "(" << OPTION_TRIP_DISTANCE << ")"
+             << " Compute distances over an extended trip of one or more"
+             << " stops"
+             << endl;
+        cout << "(" << OPTION_STOP << ")"
+             << " Stop the program" << endl;
+        cin >> option;
+        cout << endl;
+
+        switch (option) {
+            case OPTION_BASIC_CALCULATIONS:
+                phase1();
+                break;
+            case OPTION_DISTANCE_BETWEEN_POINTS:
+                break;
+            case OPTION_TRIP_DISTANCE:
+                break;
+            case OPTION_STOP:
+                cout << "Stopping program" << endl;
+                break;
+            default:
+                cerr << "Invalid input: " << option << endl << endl;
+                break;
+        };
+    } while (option != OPTION_STOP);
+
+    return 0;
+}
+
+void phase1() {
     int option = OPTION_STOP;
     do {
         cout << "Enter an integer to choose an option:" << endl;
@@ -58,8 +105,8 @@ int main(int argc, char **argv) {
         cout << "(" << OPTION_NORM << ")"
              << " Compute the norm of a three-dimensional point"
              << endl;
-        cout << "(" << OPTION_STOP << ")"
-             << " Stop the program" << endl;
+        cout << "(" << OPTION_MAIN_MENU << ")"
+             << " Return to the main menu" << endl;
         cin >> option;
         cout << endl;
 
@@ -76,16 +123,14 @@ int main(int argc, char **argv) {
             case OPTION_NORM:
                 handleNorm();
                 break;
-            case OPTION_STOP:
-                cout << "Stopping program" << endl;
+            case OPTION_MAIN_MENU:
+                cout << "Returning to main menu" << endl << endl;
                 break;
             default:
                 cerr << "Invalid input: " << option << endl << endl;
                 break;
         };
-    } while (option != OPTION_STOP);
-
-    return 0;
+    } while (option != OPTION_MAIN_MENU);
 }
 
 void handleLocationToDegrees() {
