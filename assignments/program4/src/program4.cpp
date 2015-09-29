@@ -31,6 +31,7 @@ enum BasicCalcOption {
 };
 
 
+void phase1();
 void handleLocationToDegrees();
 int getIntegerInRangeFromUser(int lowerBound, int upperBound,
                               string promptMessage);
@@ -47,7 +48,7 @@ double getNumberFromUser(string promptMessage);
 double computeDotProduct(double x1, double y1, double z1, double x2,
                          double y2, double z2);
 void handleNorm();
-void phase1();
+double computeNorm(double x, double y, double z);
 
 
 int main(int argc, char **argv) {
@@ -262,6 +263,10 @@ void handleNorm() {
     double x = getNumberFromUser("Enter x:");
     double y = getNumberFromUser("Enter y:");
     double z = getNumberFromUser("Enter z:");
-    double norm = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+    double norm = computeNorm(x, y, z);
     cout << "Norm: " << norm << endl << endl;
+}
+
+double computeNorm(double x, double y, double z) {
+    return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 }
