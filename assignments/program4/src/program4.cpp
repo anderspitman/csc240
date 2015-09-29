@@ -18,6 +18,7 @@ const double EARTH_RADIUS_MILES = 3960.0f;
 enum Option {
     OPTION_LOCATION_TO_DEGRESS = 1,
     OPTION_LAT_LON_TO_DIMENSIONAL = 2,
+    OPTION_DOT_PRODUCT = 3,
     OPTION_STOP = 5
 };
 
@@ -33,6 +34,10 @@ double getNumberInRangeFromUser(double lowerBound, double upperBound,
                                 string promptMessage);
 void computeLatLonToDimensional(double latitude, double longitude,
                                 double &x, double &y, double &z);
+void handleDotProduct();
+double getNumberFromUser(string promptMessage);
+double computeDotProduct(double x1, double y1, double z1, double x2,
+                         double y2, double z2);
 
 
 int main(int argc, char **argv) {
@@ -45,10 +50,12 @@ int main(int argc, char **argv) {
         cout << "(" << OPTION_LAT_LON_TO_DIMENSIONAL << ") "
              << "Convert latitude-longitude to three dimensional coordinates"
              << "(x-y-z)" << endl;
-        cout << "(3) " << endl
-             << "(4) " << endl
+        cout << "(" << OPTION_DOT_PRODUCT << ") "
+             << "Compute the dot-product of two three-dimensional points"
+             << endl;
+        cout << "(4) " << endl
              << "(" << OPTION_STOP << ") "
-             << "Stop program" << endl;
+             << "Stop the program" << endl;
         cin >> option;
 
         switch (option) {
@@ -57,6 +64,9 @@ int main(int argc, char **argv) {
                 break;
             case OPTION_LAT_LON_TO_DIMENSIONAL:
                 handleLatLonToDimensional();
+                break;
+            case OPTION_DOT_PRODUCT:
+                handleDotProduct();
                 break;
             case OPTION_STOP:
                 cout << "Stopping program" << endl;
@@ -158,9 +168,36 @@ double getNumberInRangeFromUser(double lowerBound, double upperBound,
 
 void computeLatLonToDimensional(double latitude, double longitude,
                                 double &x, double &y, double &z) {
-    double latAngle = (90.0f - latitude) * PI/180.0f;
+    double latAngle = (90.0f - latitude) * PI / 180.0f;
     double lonAngle = longitude * PI / 180.0f;
     x = EARTH_RADIUS_MILES * sin(latAngle) * cos(lonAngle);
     y = EARTH_RADIUS_MILES * sin(latAngle) * sin(lonAngle);
     z = EARTH_RADIUS_MILES * cos(latAngle);
+}
+
+void handleDotProduct() {
+    cout << "You will enter two points: (x1, y1, z1) and (x2, y2, z2)"
+         << endl;
+    double x1 = getNumberFromUser("Enter x1:");
+    double y1 = getNumberFromUser("Enter y1:");
+    double z1 = getNumberFromUser("Enter z1:");
+
+    double x2 = getNumberFromUser("Enter x2:");
+    double y2 = getNumberFromUser("Enter y2:");
+    double z2 = getNumberFromUser("Enter z2:");
+
+    double dotProduct = computeDotProduct(x1, y1, z1, x2, y2, z2);
+    cout << "Dot product:" << dotProduct << endl << endl;
+}
+
+double getNumberFromUser(string promptMessage) {
+    cout << promptMessage << endl;
+    double number = 0.0f;
+    cin >> number;
+    return number;
+}
+
+double computeDotProduct(double x1, double y1, double z1, double x2,
+                         double y2, double z2) {
+    return x1*x2 + y1*y2 + z1*z2;
 }
