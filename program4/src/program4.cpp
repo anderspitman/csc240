@@ -16,6 +16,7 @@ const double PI = 3.14159f;
 const double EARTH_RADIUS_MILES = 3960.0f;
 const char HEMI_INIT = 'n';
 
+
 enum MainOption {
     OPTION_BASIC_CALCULATIONS = 1,
     OPTION_DISTANCE_BETWEEN_POINTS = 2,
@@ -62,6 +63,8 @@ double distanceBetweenTwoPoints(
     int degreesALon, int minutesALon, int secondsALon, char hemisphereALon,
     int degreesBLat, int minutesBLat, int secondsBLat, char hemisphereBLat,
     int degreesBLon, int minutesBLon, int secondsBLon, char hemisphereBLon);
+void handleTripDistance();
+int isYes(char choice);
 
 int main(int argc, char **argv) {
     int option = OPTION_STOP;
@@ -90,6 +93,7 @@ int main(int argc, char **argv) {
                 handleDistanceBetweenTwoPoints();
                 break;
             case OPTION_TRIP_DISTANCE:
+                handleTripDistance();
                 break;
             case OPTION_STOP:
                 cout << "Stopping program" << endl;
@@ -384,4 +388,79 @@ double distanceBetweenTwoPoints(
     double distanceBetween = distanceBetweenTwoPointsLatLon(aLat, aLon, bLat,
                                                             bLon);
     return distanceBetween;
+}
+
+
+void handleTripDistance() {
+    cout << "You will enter multiple points" << endl;
+    cout << "Enter the first point" << endl;
+
+    double prevDegreesLat = 0.0;
+    double prevMinutesLat = 0.0;
+    double prevSecondsLat = 0.0;
+    char prevHemisphereLat = HEMI_INIT;
+    double prevDegreesLon = 0.0;
+    double prevMinutesLon = 0.0;
+    double prevSecondsLon = 0.0;
+    char prevHemisphereLon = HEMI_INIT;
+    int prevValid = 0;
+    double distanceMax = 0.0;
+    double distanceTotal = 0.0;
+    int legCount = 0;
+
+    char anotherPoint = 'n';
+    do {
+        double degreesLat = 0.0;
+        double minutesLat = 0.0;
+        double secondsLat = 0.0;
+        char hemisphereLat = HEMI_INIT;
+        getPositionFromUser(degreesLat, minutesLat, secondsLat,
+                            hemisphereLat, "point latitude");
+
+        double degreesLon = 0.0;
+        double minutesLon = 0.0;
+        double secondsLon = 0.0;
+        char hemisphereLon = HEMI_INIT;
+        getPositionFromUser(degreesLon, minutesLon, secondsLon,
+                            hemisphereLon, "point longitude");
+
+
+        if (prevValid) {
+            double currentDistance = distanceBetweenTwoPoints(
+                prevDegreesLat, prevMinutesLat, prevSecondsLat,
+                prevHemisphereLat,
+                prevDegreesLon, prevMinutesLon, prevSecondsLon,
+                prevHemisphereLon,
+                degreesLat, minutesLat, secondsLat, hemisphereLat,
+                degreesLon, minutesLon, secondsLon, hemisphereLon);
+
+            ++legCount;
+            distanceTotal += currentDistance;
+            if (currentDistance > distanceMax) {
+                distanceMax = currentDistance;
+            }
+        }
+
+        cout << "Enter another point? [y/N]" << endl;
+        cin >> anotherPoint;
+
+        prevDegreesLat = degreesLat;
+        prevMinutesLat = minutesLat;
+        prevSecondsLat = secondsLat;
+        prevHemisphereLat = hemisphereLat;
+        prevDegreesLon = degreesLon;
+        prevMinutesLon = minutesLon;
+        prevSecondsLon = secondsLon;
+        prevHemisphereLon = hemisphereLon;
+        prevValid = 1;
+    } while (isYes(anotherPoint));
+
+    double averageDistance = distanceTotal / legCount;
+    cout << "Total distance: " << distanceTotal << endl;
+    cout << "Largest distance: " << distanceMax << endl;
+    cout << "Average distance: " << averageDistance << endl << endl;
+}
+
+int isYes(char choice) {
+    return choice == 'y' || choice == 'Y';
 }
