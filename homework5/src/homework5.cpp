@@ -1,4 +1,4 @@
-// Anders Pitman - Program 4
+// Anders Pitman - Homework 5 - Compute Dimensions
 #include <iostream>
 #include <math.h>
 
