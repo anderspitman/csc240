@@ -50,7 +50,7 @@ void setAllRemainingPrime(int numbers[], const int length) {
 }
 
 void setPrimes(int numbers[], const int upperBound) {
-    assert(upperBound >= 2);
+    assert(upperBound >= 1);
 
     int currentNumber = 2;
     const int SIZE = upperBound + 1;
@@ -68,14 +68,4 @@ int *findPrimes(const int upperBound) {
     int *numbers = createNumbers(upperBound);
     setPrimes(numbers, upperBound);
     return numbers;
-}
-
-void printPrimesInRange(const int lowerBound, const int upperBound) {
-    cout << "Hi there" << endl;
-    int *numbers = findPrimes(upperBound);
-    for (int i=lowerBound; i<=upperBound; ++i) {
-        if (numbers[i] == TYPE_PRIME) {
-            cout << i << endl;
-        }
-    }
 }
