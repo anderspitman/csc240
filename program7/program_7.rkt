@@ -54,35 +54,21 @@
       (null? listA)
       (null? listB))
     0
-    (largestDifferenceIter
-      (absDifference
-        (car listA)
-        (car listB))
-      (cdr listA)
-      (cdr listB))))
-
-(define (largestDifferenceIter startDifference listA listB)
-  (if
-    (or
-      (null? listA)
-      (null? listB))
-    startDifference
     (if
       (>
-        startDifference
-        (absDifference
-          (car listA)
-          (car listB)))
-      (largestDifferenceIter
-        startDifference
-        (cdr listA)
-        (cdr listB))
-      (largestDifferenceIter
         (absDifference
           (car listA)
           (car listB))
+        (largestDifference
+          (cdr listA)
+          (cdr listB)))
+      (absDifference
+        (car listA)
+        (car listB))
+      (largestDifference
         (cdr listA)
         (cdr listB)))))
+
 
 (define (absDifference a b)
   (if (<= a b)
