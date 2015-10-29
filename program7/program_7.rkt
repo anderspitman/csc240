@@ -78,8 +78,11 @@
         (cdr listA)
         (cdr listB))
       (largestDifferenceIter
-        (car listA)
-        (car listB)))))
+        (absDifference
+          (car listA)
+          (car listB))
+        (cdr listA)
+        (cdr listB)))))
 
 (define (absDifference a b)
   (if (<= a b)
