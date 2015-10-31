@@ -75,10 +75,34 @@
           item)))
     '()))
 
-(define (updateBag bag item)
-  '("a" . 3))
+(define (deleteBag bag item)
+  (if (not (null? bag))
+    (if
+      (>
+        (getBagCount bag item)
+        1)
+      (if
+        (string=?
+          (getValue (car bag))
+          item)
+        (cons
+          (cons
+            (getValue (car bag))
+            (-
+              (getCount (car bag))
+              1))
+          (cdr bag))
+        (cons
+          (car bag)
+          (deleteBag
+            (cdr bag)
+            item)))
+      (deleteAllBag
+        bag
+        item))
+    '()))
 
 
 ; you can ignore this. it's for unit testing in racket
 (provide getValue getCount newPair incPair decPair insertBag getBagCount
-         deleteAllBag updateBag)
+         deleteAllBag deleteBag)
