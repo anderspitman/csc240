@@ -102,7 +102,31 @@
         item))
     '()))
 
+(define (intersectBag bagA bagB)
+  (if (and
+        (not (null? bagA))
+        (not (null? bagB)))
+    (cons
+      (cons
+        (getValue (car bagA))
+        (minimum
+          (getBagCount
+            bagA
+            (getValue (car bagA)))
+          (getBagCount
+            bagB
+            (getValue (car bagA)))))
+      (intersectBag
+        (cdr bagA)
+        (cdr bagB)))
+    '()))
+
+(define (minimum a b)
+  (if (< a b)
+    a
+    b))
+
 
 ; you can ignore this. it's for unit testing in racket
 (provide getValue getCount newPair incPair decPair insertBag getBagCount
-         deleteAllBag deleteBag)
+         deleteAllBag deleteBag intersectBag)
