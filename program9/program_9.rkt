@@ -126,7 +126,35 @@
     a
     b))
 
+(define (unionBag bagA bagB)
+  (cond
+    ((not (null? bagA))
+     ; As long as A is not null, recursively add the count of the first item
+     ; of A with the count of that item in B (which may be 0 if the item
+     ; doesn't exist in B), and append the result to the output bag
+     (cons
+       (cons
+         (getValue (car bagA))
+         (+
+           (getCount (car bagA))
+           (getBagCount
+             bagB
+             (getValue (car bagA)))))
+       (unionBag
+         (cdr bagA)
+         ; Need to reduce B along with A, which makes the final condition work
+         (deleteAllBag
+           bagB
+           (getValue (car bagA))))))
+    ((not (null? bagB))
+      ; Once A is exhausted, anything remaining in B represents the items
+      ; that existed in B but not in A, so they can simply be added to the end
+      ; with their current counts
+     bagB)
+    (#t
+     '())))
+
 
 ; you can ignore this. it's for unit testing in racket
 (provide getValue getCount newPair incPair decPair insertBag getBagCount
-         deleteAllBag deleteBag intersectBag)
+         deleteAllBag deleteBag intersectBag unionBag)
