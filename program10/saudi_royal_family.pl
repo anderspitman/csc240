@@ -1,3 +1,5 @@
+% Anders Pitman - Program 10 - Family Tree for Saudi Arabian Royal Family
+
 % male( <name> ).
 male( turki_bin_abdullah_bin_muhammad ).
 male( faisal_bin_turki ).
@@ -19,6 +21,8 @@ female( hassa_bint_ahmed_al_sudairi ).
 female( fahda_bint_asi_al_shuraim ).
 
 % lifespan( <name>, <birth year>, <death year>).
+lifespan( wadhah_bint_muhammad_bin_aqab, unknown, unknown).
+lifespan( tarfa_bint_abdullah_bin_abdulateef_al_sheikh, unknown, unknown).
 lifespan( turki_bin_abdullah_bin_muhammad, 1755, 1834 ).
 lifespan( faisal_bin_turki, 1785, 1865 ).
 lifespan( saud_bin_faisal, unknown, 1875 ).
