@@ -1,4 +1,4 @@
-; Anders Pitman - Program 10 - Scheme Matrix Manipulation
+; Anders Pitman - Program 11 Phase 1 - Scheme Matrix Manipulation
 
 #lang racket/base
 
