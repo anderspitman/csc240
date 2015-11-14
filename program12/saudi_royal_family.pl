@@ -91,17 +91,59 @@ daughterOf(Daughter, Parent)
 % For the sibling definitions below, I chose to include half siblings since
 % the kings often have children from multiple wives.
 
+siblingOf(Person, Sibling)
+    :- (motherOf(Mother, Person), motherOf(Mother, Sibling);
+        fatherOf(Father, Person), fatherOf(Father, Sibling)),
+        Person \= Sibling.
+
 brotherOf(Brother, Sibling)
     :- male(Brother),
-       (motherOf(Mother, Brother), motherOf(Mother, Sibling);
-        fatherOf(Father, Brother), fatherOf(Father, Sibling)).
+       siblingOf(Brother, Sibling).
 
 sisterOf(Sister, Sibling)
     :- female(Sister),
-       (motherOf(Mother, Sister), motherOf(Mother, Sibling);
-        fatherOf(Father, Sister), fatherOf(Father, Sibling)).
+       siblingOf(Sister, Sibling).
 
-siblingOf(Person, Sibling)
-    :- (motherOf(Mother, Person), motherOf(Mother, Sibling);
-        fatherOf(Father, Person), fatherOf(Father, Sibling)).
+auntOf(Aunt, Person)
+    :- female(Aunt),
+       parentOf(Parent, Person),
+       siblingOf(Aunt, Parent).
+
+uncleOf(Uncle, Person)
+    :- male(Uncle),
+       parentOf(Parent, Person),
+       siblingOf(Uncle, Parent).
        
+grandparentOf(Grandparent, Grandchild)
+    :- parentOf(Parent, Grandchild),
+       parentOf(Grandparent, Parent).
+
+ancestorOf(Ancestor, Descendent)
+    :- parentOf(Ancestor, Descendent);
+       (motherOf(Mother, Descendent),
+        ancestorOf(Ancestor, Mother));
+       (fatherOf(Father, Descendent),
+        ancestorOf(Ancestor, Father)).
+
+descenentOf(Descendent, Ancestor)
+    :- ancestorOf(Ancestor, Descendent).
+
+bornDuringLifeOf(Person, Other) :-
+    lifespan(Person, BirthYear, _),
+    integer(BirthYear),
+    lifespan(Other, OtherBirthYear, OtherDeathYear),
+    integer(OtherBirthYear),
+    integer(OtherDeathYear),
+    BirthYear >= OtherBirthYear,
+    BirthYear =< OtherDeathYear.
+
+contemporaryOf(Contemporary, Person) :-
+    bornDuringLifeOf(Contemporary, Person);
+    bornDuringLifeOf(Person, Contemporary).
+
+successorOf(Successor, Person) :-
+    rulerOf(Successor, Country, SuccessorBeganYear, _),
+    integer(SuccessorBeganYear),
+    rulerOf(Person, Country, _, PersonEndYear),
+    integer(PersonEndYear),
+    SuccessorBeganYear == PersonEndYear.
