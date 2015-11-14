@@ -1,4 +1,5 @@
-% Anders Pitman - Program 10 - Family Tree for Saudi Arabian Royal Family
+% Anders Pitman - Program 12 - Family Tree for Saudi Arabian Royal Family with
+% rules
 
 % male( <name> ).
 male(turki ).
