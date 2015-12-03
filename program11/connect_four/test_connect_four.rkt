@@ -118,6 +118,24 @@
     (2 2 1 0 0 0 0)
     (1 2 2 1 2 0 0)))
 
+(define
+  boardMoreThan4
+  '((0 0 0 0 0 0 1)
+    (0 0 0 0 0 0 1)
+    (0 0 0 0 0 0 1)
+    (1 0 0 0 0 0 2)
+    (1 2 0 0 0 0 1)
+    (1 2 2 2 2 2 1)))
+
+(define
+  boardFull
+  '((2 1 1 2 2 1 1)
+    (1 2 2 1 1 2 2)
+    (2 1 1 2 2 1 1)
+    (1 2 2 1 1 2 2)
+    (2 1 1 2 2 1 1)
+    (1 2 2 1 1 2 2)))
+
 (define (PLAYER_ONE) 1)
 (define (PLAYER_TWO) 2)
 
@@ -264,3 +282,10 @@
 
 (check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
 (check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
+
+(check-equal? (TAPWinBoard boardMoreThan4 (PLAYER_TWO) 4) #t)
+
+(check-equal? (TAPBoardFullBoard boardFull) #t)
+(check-equal? (TAPBoardFullBoard boardEmpty) #f)
+(check-equal? (TAPBoardFullBoard boardWinVertical) #f)
+(check-equal? (TAPBoardFullBoard boardWinDiagonalForwardSlash) #f)

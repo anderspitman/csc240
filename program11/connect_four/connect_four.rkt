@@ -40,13 +40,16 @@
     (newline)
     (TAPShowBoard (TAPGetBoard))))
 
+(define (TAPMakeMove)
+  (TAPChooseLegal (TAPRandomMove)))
+
 (define (TAPLegalMoveP column)
   (TAPLegalMoveBoard (TAPGetBoard) column))
 
 (define (TAPWinP lastMove)
   (TAPWinBoard
     (TAPGetBoard)
-    (TAPNextPlayer)
+    (TAPPreviousPlayer)
     lastMove))
 
 (define (TAPWillWinP moveColumn)
@@ -70,7 +73,7 @@
 
 
 ;------------------------------------------------------------------------------
-; Private Functions
+; Global Data Accessor Functions
 ;------------------------------------------------------------------------------
 
 (define (TAPSetGameState nextPlayer board)
@@ -91,8 +94,16 @@
     (PLAYER2_MARKER)
     (PLAYER1_MARKER)))
 
+(define (TAPPreviousPlayer)
+  (TAPNextPlayer))
+
 (define (TAPGetBoard)
   (cdr TAPGame))
+
+
+;------------------------------------------------------------------------------
+; Private Functions
+;------------------------------------------------------------------------------
 
 (define (TAPInitializeBoard)
   (TAPSetGameState
@@ -151,17 +162,25 @@
           (cdr board)
           column)))))
 
-
-
 (define (TAPLegalMoveBoard board column)
   (=
     (TAPGetCell board 1 column)
     0))
 
+ (define (TAPChooseLegal move)
+   (if (TAPLegalMoveP move)
+     move
+     (TAPChooseLegal (TAPRandomMove))))
+
 (define (TAPRandomMove)
   (+
     1
     (random (NUM_COLUMNS))))
+
+
+;------------------------------------------------------------------------------
+; Win Determination Functions
+;------------------------------------------------------------------------------
 
 (define (TAPWinBoard board player lastMove)
   (or
@@ -184,7 +203,7 @@
     #f))
 
 (define (TAPWinVertical board player column)
-  (=
+  (winningNumber
     (TAPCountDown
       board
       player
@@ -193,8 +212,7 @@
         (TAPFreeRowIndex
           board
           column))
-      column)
-    4))
+      column)))
 
 (define (TAPCountDown board player row column)
   (if
@@ -219,8 +237,7 @@
       0)))
 
 (define (TAPWinHorizontal board player lastMove)
-  (=
-    4
+  (winningNumber
     ; left plus right minus 1 since the first column gets counted twice
     (-
       (+
@@ -295,8 +312,7 @@
        0)))
 
 (define (TAPWinDiagonalForwardSlash board player lastMove)
-  (=
-    4
+  (winningNumber
     ; minus 1 since the first position gets counted twice
     (-
       (+
@@ -363,8 +379,7 @@
         (- column 1)))))
 
 (define (TAPWinDiagonalBackSlash board player lastMove)
-  (=
-    4
+  (winningNumber
     ; minus 1 since the first position gets counted twice
     (-
       (+
@@ -387,7 +402,6 @@
             1)
           lastMove))
       1)))
-
 
 (define (TAPNumDownAndRight board player row column)
   (if
@@ -431,10 +445,14 @@
         (- row 1)
         (- column 1)))))
 
+(define (winningNumber number)
+  (>= number (WIN_COUNT)))
+
 
 ;------------------------------------------------------------------------------
 ; Matrix functions
 ;------------------------------------------------------------------------------
+
 (define (TAPGetCell matrix row column)
   (TAPGetListItem
     (TAPGetListItem
@@ -481,12 +499,31 @@
           1)
         value))))
 
+(define (TAPBoardFull)
+  (TAPBoardFullBoard (TAPGetBoard)))
+
+(define (TAPBoardFullBoard board)
+  (TAPBoardFullIter board 1))
+
+(define (TAPBoardFullIter board column)
+  (if
+    (> column (NUM_COLUMNS))
+    #t
+    (and
+      (not (TAPLegalMoveBoard
+             board 
+             column))
+      (TAPBoardFullIter
+          board
+          (+ column 1)))))
+
 
 ; you can ignore this. it's for unit testing in racket
 (provide TAPGetBoard TAPGetCell TAPSetCell TAPSetListItem TAPStartGame
-         TAPMarkMove
+         TAPMarkMove TAPMakeMove
          TAPInitializeBoard TAPLegalMoveP TAPLegalMoveBoard TAPMarkMoveBoard
          TAPFreeRowIndex TAPShowGame TAPRandomMove TAPWinBoard TAPWinVertical
          TAPCountDown TAPWinHorizontal TAPNumLeft TAPNumRight TAPNumUpAndRight
          TAPNumDownAndLeft TAPWinDiagonalForwardSlash TAPNumDownAndRight
-         TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP)
+         TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP
+         TAPBoardFullBoard TAPBoardFull)
