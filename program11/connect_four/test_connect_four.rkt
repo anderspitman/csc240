@@ -109,6 +109,15 @@
     (0 1 1 2 2 0 0)
     (1 2 2 2 1 2 0)))
 
+(define
+  boardWinDiagonalBackSlash
+  '((0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0)
+    (1 0 0 0 0 0 0)
+    (1 1 0 0 0 0 0)
+    (2 2 1 0 0 0 0)
+    (1 2 2 1 2 0 0)))
+
 (define (PLAYER_ONE) 1)
 (define (PLAYER_TWO) 2)
 
@@ -200,11 +209,58 @@
 (check-equal?
   (TAPNumDownAndLeft boardWinDiagonalForwardSlash (PLAYER_ONE) 6 1) 1)
 
+(check-equal?
+  (TAPWinDiagonalForwardSlash boardWinDiagonalForwardSlash (PLAYER_ONE) 1) #t)
+(check-equal?
+  (TAPWinDiagonalForwardSlash boardWinDiagonalForwardSlash (PLAYER_ONE) 2) #t)
+(check-equal?
+  (TAPWinDiagonalForwardSlash boardWinDiagonalForwardSlash (PLAYER_ONE) 3) #t)
+(check-equal?
+  (TAPWinDiagonalForwardSlash boardWinDiagonalForwardSlash (PLAYER_ONE) 4) #t)
+
+(check-equal?
+  (TAPNumDownAndRight boardWinDiagonalBackSlash (PLAYER_ONE) 3 1) 4)
+(check-equal?
+  (TAPNumDownAndRight boardWinDiagonalBackSlash (PLAYER_ONE) 4 2) 3)
+(check-equal?
+  (TAPNumDownAndRight boardWinDiagonalBackSlash (PLAYER_ONE) 5 3) 2)
+(check-equal?
+  (TAPNumDownAndRight boardWinDiagonalBackSlash (PLAYER_ONE) 6 4) 1)
+
+(check-equal?
+  (TAPNumUpAndLeft boardWinDiagonalBackSlash (PLAYER_ONE) 6 4) 4)
+(check-equal?
+  (TAPNumUpAndLeft boardWinDiagonalBackSlash (PLAYER_ONE) 5 3) 3)
+(check-equal?
+  (TAPNumUpAndLeft boardWinDiagonalBackSlash (PLAYER_ONE) 4 2) 2)
+(check-equal?
+  (TAPNumUpAndLeft boardWinDiagonalBackSlash (PLAYER_ONE) 3 1) 1)
+
+(check-equal?
+  (TAPWinDiagonalBackSlash boardWinDiagonalBackSlash (PLAYER_ONE) 1) #t)
+(check-equal?
+  (TAPWinDiagonalBackSlash boardWinDiagonalBackSlash (PLAYER_ONE) 2) #t)
+(check-equal?
+  (TAPWinDiagonalBackSlash boardWinDiagonalBackSlash (PLAYER_ONE) 3) #t)
+(check-equal?
+  (TAPWinDiagonalBackSlash boardWinDiagonalBackSlash (PLAYER_ONE) 4) #t)
+
+
 (check-equal? (TAPWinBoard boardWinVertical (PLAYER_ONE) 1) #t)
 (check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 1) #t)
 (check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 2) #t)
 (check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 3) #t)
 (check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 4) #t)
+
+(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 1) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 2) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 3) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 4) #t)
+
+(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 1) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 2) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 3) #t)
+(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 4) #t)
 
 (check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
 (check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
