@@ -4,6 +4,7 @@
 
 (define human #t)
 (define move 0)
+(define iterationCount 0)
 
 (define (manVsMan)
   (begin
@@ -47,16 +48,26 @@
 
 (define (machineVsMachine)
   (begin
+    ;(random-seed 1)
     (TAPInitializeBoard)
     (machineVsMachineIter)))
 
 (define (machineVsMachineIter)
   (begin
-    ;(display "Automated move...")
-    ;(newline)
-    (set! move (TAPMakeMove))
+    (display "Automated move...")
+    (newline)
+    ;(set! move (TAPMakeMove))
+    (set! move (TAPMakeMoveStatistical))
+    (display "Making move: ")
+    (display move)
+    (newline)
+    (display "Iteration: ")
+    (display iterationCount)
+    (set! iterationCount
+      (+ iterationCount 1))
+    (newline)
     (TAPMarkMove move)
-    ;(TAPShowGame)
+    (TAPShowGame)
     (cond
       ((TAPWinP move)
        (TAPPreviousPlayer))
@@ -105,6 +116,6 @@
         (- n 1)))))
 
 ;(manVsMan)
-;(machineVsMachine)
-(manVsMachine)
+(machineVsMachine)
+;(manVsMachine)
 ;(runNTimes 1000)

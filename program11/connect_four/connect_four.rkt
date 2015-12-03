@@ -10,7 +10,7 @@
 (define (NUM_ROWS) 6)
 (define (NUM_COLUMNS) 7)
 (define (WIN_COUNT) 4)
-(define (NUM_ITERATIONS) 10000)
+(define (NUM_ITERATIONS) 100)
 
 
 ;------------------------------------------------------------------------------
@@ -332,16 +332,26 @@
         move
         (- numIterations 1)))))
 
+(define index 0)
 (define (TAPTryMove gameState move)
+  (set! index 0)
   ;(display "Trying move: ") (display move) (newline)
-  (TAPTryMoveState
-    (TAPStateCreate
-      (TAPStateGetNextPlayer gameState)
-      (TAPBoardMarkMove
-        (TAPStateGetBoard gameState)
-        (TAPStateGetPlayer gameState)
-        move))
-    (TAPStateGetPlayer gameState)))
+  (if
+    ; TODO: Fix this hack. Using NUM_ITERATIONS just to return a relatively
+    ; huge value here and make this move win
+    (TAPBoardWillWin
+      (TAPStateGetBoard gameState)
+      (TAPStateGetPlayer gameState)
+      move)
+    (NUM_ITERATIONS)
+    (TAPTryMoveState
+      (TAPStateCreate
+        (TAPStateGetNextPlayer gameState)
+        (TAPBoardMarkMove
+          (TAPStateGetBoard gameState)
+          (TAPStateGetPlayer gameState)
+          move))
+      (TAPStateGetPlayer gameState))))
 
 (define (TAPTryMoveState gameState player)
   (if
@@ -354,6 +364,8 @@
 
 (define (TAPTryMoveIter gameState player move)
   ;(display "move: ") (display move) (newline)
+  (set! index (+ index 1))
+  (display index) (newline)
   (cond
     ((TAPBoardWillWin
        (TAPStateGetBoard gameState)
@@ -368,15 +380,30 @@
     ((TAPBoardFull (TAPStateGetBoard gameState))
      0)
     (#t
-     (TAPTryMoveIter
+     (TAPTryMoveIterCaptureData
        (TAPStateCreate
          (TAPStateGetNextPlayer gameState)
          (TAPBoardMarkMove
            (TAPStateGetBoard gameState)
            (TAPStateGetPlayer gameState)
-        move))
-       player
-       (TAPBoardRandomLegalMove (TAPStateGetBoard gameState))))))
+           move))
+       player))))
+
+     ;(TAPTryMoveIter
+     ;  (TAPStateCreate
+     ;    (TAPStateGetNextPlayer gameState)
+     ;    (TAPBoardMarkMove
+     ;      (TAPStateGetBoard gameState)
+     ;      (TAPStateGetPlayer gameState)
+     ;      move))
+     ;  player
+     ;  (TAPBoardRandomLegalMove (TAPStateGetBoard gameState))))))
+
+(define (TAPTryMoveIterCaptureData gameState player)
+  (TAPTryMoveIter
+    gameState
+    player
+    (TAPBoardRandomLegalMove (TAPStateGetBoard gameState))))
 
 (define (TAPChooseLegal move)
   (if (TAPLegalMoveP move)
