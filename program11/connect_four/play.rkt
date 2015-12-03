@@ -48,6 +48,7 @@
 
 (define (machineVsMachine)
   (begin
+    ;(random-seed 4)
     ;(random-seed 1)
     (TAPInitializeBoard)
     (machineVsMachineIter)))
@@ -116,6 +117,6 @@
         (- n 1)))))
 
 ;(manVsMan)
-(machineVsMachine)
-;(manVsMachine)
+;(machineVsMachine)
+(manVsMachine)
 ;(runNTimes 1000)
