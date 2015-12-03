@@ -19,6 +19,16 @@
     (TAPInitializeBoard)
     (newline)))
 
+(define (TAPMarkMove column)
+  (if (TAPLegalMoveP column)
+    (TAPSetGameState
+      (TAPNextPlayer)
+      (TAPMarkMoveBoard
+        (TAPGetBoard)
+        (TAPGetCurrentPlayer)
+        column))
+    #f))
+
 (define (TAPShowGame)
   (begin
     (display "Current player: ")
@@ -30,16 +40,23 @@
     (newline)
     (TAPShowBoard (TAPGetBoard))))
 
-(define (TAPMarkMove column)
-  (TAPSetGameState
+(define (TAPLegalMoveP column)
+  (TAPLegalMoveBoard (TAPGetBoard) column))
+
+(define (TAPWinP lastMove)
+  (TAPWinBoard
+    (TAPGetBoard)
     (TAPNextPlayer)
+    lastMove))
+
+(define (TAPWillWinP moveColumn)
+  (TAPWinBoard
     (TAPMarkMoveBoard
       (TAPGetBoard)
       (TAPGetCurrentPlayer)
-      column)))
-
-(define (TAPLegalMoveP column)
-  (TAPLegalMoveBoard TAPGame))
+      moveColumn)
+    (TAPGetCurrentPlayer)
+    moveColumn))
 
 
 ;------------------------------------------------------------------------------
@@ -472,4 +489,4 @@
          TAPFreeRowIndex TAPShowGame TAPRandomMove TAPWinBoard TAPWinVertical
          TAPCountDown TAPWinHorizontal TAPNumLeft TAPNumRight TAPNumUpAndRight
          TAPNumDownAndLeft TAPWinDiagonalForwardSlash TAPNumDownAndRight
-         TAPNumUpAndLeft TAPWinDiagonalBackSlash)
+         TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP)
