@@ -3,6 +3,17 @@
 #lang racket/base
 
 ;------------------------------------------------------------------------------
+; Constants
+;------------------------------------------------------------------------------
+(define (PLAYER1_MARKER) 1)
+(define (PLAYER2_MARKER) 2)
+(define (NUM_ROWS) 6)
+(define (NUM_COLUMNS) 7)
+(define (WIN_COUNT) 4)
+(define (NUM_ITERATIONS) 10)
+
+
+;------------------------------------------------------------------------------
 ; Globals
 ;------------------------------------------------------------------------------
 
@@ -23,16 +34,16 @@
   (if (TAPLegalMoveP column)
     (TAPSetGameState
       (TAPNextPlayer)
-      (TAPMarkMoveBoard
+      (TAPBoardMarkMove
         (TAPGetBoard)
-        (TAPGetCurrentPlayer)
+        (TAPGetPlayer)
         column))
     #f))
 
 (define (TAPShowGame)
   (begin
     (display "Current player: ")
-    (display (TAPGetCurrentPlayer))
+    (display (TAPGetPlayer))
     (newline)
     (display "Next player: ")
     (display (TAPNextPlayer))
@@ -44,62 +55,142 @@
   (TAPChooseLegal (TAPRandomMove)))
 
 (define (TAPLegalMoveP column)
-  (TAPLegalMoveBoard (TAPGetBoard) column))
+  (TAPBoardLegalMove (TAPGetBoard) column))
 
 (define (TAPWinP lastMove)
-  (TAPWinBoard
+  (TAPBoardWin
     (TAPGetBoard)
     (TAPPreviousPlayer)
     lastMove))
 
 (define (TAPWillWinP moveColumn)
-  (TAPWinBoard
-    (TAPMarkMoveBoard
-      (TAPGetBoard)
-      (TAPGetCurrentPlayer)
-      moveColumn)
-    (TAPGetCurrentPlayer)
+  (TAPBoardWillWin
+    (TAPGetBoard)
+    (TAPGetPlayer)
     moveColumn))
 
 
 ;------------------------------------------------------------------------------
-; Constants
+; State Object Functions
 ;------------------------------------------------------------------------------
-(define (PLAYER1_MARKER) 1)
-(define (PLAYER2_MARKER) 2)
-(define (NUM_ROWS) 6)
-(define (NUM_COLUMNS) 7)
-(define (WIN_COUNT) 4)
+
+(define (TAPStateCreate player board)
+  (cons player board))
+
+(define (TAPStateGetPlayer state)
+  (car state))
+
+(define (TAPStateGetBoard state)
+  (cdr state))
+
+(define (TAPStateGetNextPlayer state)
+  (if
+    (=
+      (TAPStateGetPlayer state)
+      (PLAYER1_MARKER))
+    (PLAYER2_MARKER)
+    (PLAYER1_MARKER)))
+
+
+;------------------------------------------------------------------------------
+; Board Object Functions
+;------------------------------------------------------------------------------
+
+(define (TAPBoardMarkMove board player column)
+  (if
+    (TAPBoardLegalMove board column)
+    (TAPSetCell
+      board
+      (TAPFreeRowIndex
+        board
+        column)
+      column
+      player)
+    board))
+
+(define (TAPBoardLegalMove board column)
+  (=
+    (TAPGetCell board 1 column)
+    0))
+
+(define (TAPBoardFull board)
+  (TAPBoardFullIter board 1))
+
+(define (TAPBoardFullIter board column)
+  (if
+    (> column (NUM_COLUMNS))
+    #t
+    (and
+      (not (TAPBoardLegalMove
+             board 
+             column))
+      (TAPBoardFullIter
+          board
+          (+ column 1)))))
+
+(define (TAPBoardWillWin board player moveColumn)
+  (TAPBoardWin
+    (TAPBoardMarkMove
+      board
+      player
+      moveColumn)
+    player
+    moveColumn))
+
+(define (TAPBoardWin board player lastMove)
+  (or
+    (TAPWinVertical
+      board
+      player
+      lastMove)
+    (TAPWinHorizontal
+      board
+      player
+      lastMove)
+    (TAPWinDiagonalForwardSlash
+      board
+      player
+      lastMove)
+    (TAPWinDiagonalBackSlash
+      board
+      player
+      lastMove)
+    #f))
+
+(define (TAPBoardRandomLegalMove board)
+  (TAPBoardRandomLegalMoveIter board (TAPRandomMove)))
+
+(define (TAPBoardRandomLegalMoveIter board move)
+  (if (TAPBoardLegalMove board move)
+    move
+    (TAPBoardRandomLegalMoveIter board (TAPRandomMove))))
 
 
 ;------------------------------------------------------------------------------
 ; Global Data Accessor Functions
 ;------------------------------------------------------------------------------
 
+(define (TAPGetGameState)
+  TAPGame)
+
 (define (TAPSetGameState nextPlayer board)
   (set!
     TAPGame
-    (cons
+    (TAPStateCreate
       nextPlayer
       board)))
 
-(define (TAPGetCurrentPlayer)
-  (car TAPGame))
+(define (TAPGetPlayer)
+  (TAPStateGetPlayer TAPGame))
 
 (define (TAPNextPlayer)
-  (if
-    (=
-      (TAPGetCurrentPlayer)
-      (PLAYER1_MARKER))
-    (PLAYER2_MARKER)
-    (PLAYER1_MARKER)))
+  (TAPStateGetNextPlayer TAPGame))
 
 (define (TAPPreviousPlayer)
   (TAPNextPlayer))
 
 (define (TAPGetBoard)
-  (cdr TAPGame))
-
+  (TAPStateGetBoard TAPGame))
 
 ;------------------------------------------------------------------------------
 ; Private Functions
@@ -132,18 +223,6 @@
       (TAPShowRow (car board))
       (TAPShowBoard (cdr board)))))
 
-(define (TAPMarkMoveBoard board player column)
-  (if
-    (TAPLegalMoveBoard board column)
-    (TAPSetCell
-      board
-      (TAPFreeRowIndex
-        board
-        column)
-      column
-      player)
-    board))
-
 ; Computes the first available row in the column, or 0 if full
 (define (TAPFreeRowIndex board column)
   (if
@@ -162,45 +241,113 @@
           (cdr board)
           column)))))
 
-(define (TAPLegalMoveBoard board column)
-  (=
-    (TAPGetCell board 1 column)
-    0))
 
- (define (TAPChooseLegal move)
-   (if (TAPLegalMoveP move)
-     move
-     (TAPChooseLegal (TAPRandomMove))))
+;------------------------------------------------------------------------------
+; Move Decision Functions
+;------------------------------------------------------------------------------
+
+(define (TAPMakeMoveStatistical)
+  (TAPTryMoves
+    (TAPGetGameState)
+    (TAPGetLegalMoves
+      (TAPGetBoard))))
+
+(define (TAPTryMoves gameState moves)
+  (if
+    (null? moves)
+    '()
+    (cons
+      (TAPTryMove
+        gameState
+        (car moves))
+      (TAPTryMoves
+        gameState
+        (cdr moves)))))
+
+(define (TAPTryMove gameState move)
+  ;(display "Trying move: ") (display move) (newline)
+  (TAPTryMoveState
+    (TAPStateCreate
+      (TAPStateGetNextPlayer gameState)
+      (TAPBoardMarkMove
+        (TAPStateGetBoard gameState)
+        (TAPStateGetPlayer gameState)
+        move))
+    (TAPStateGetPlayer gameState)))
+
+(define (TAPTryMoveState gameState player)
+  (if
+    (TAPBoardFull (TAPStateGetBoard gameState))
+    0
+    (TAPTryMoveIter
+      gameState
+      player
+      (TAPBoardRandomLegalMove (TAPStateGetBoard gameState)))))
+
+(define (TAPTryMoveIter gameState player move)
+  ;(display "move: ") (display move) (newline)
+  (cond
+    ((TAPBoardWillWin
+       (TAPStateGetBoard gameState)
+       (TAPStateGetPlayer gameState)
+       move)
+     (if
+       (=
+         player
+         (TAPStateGetPlayer gameState))
+       1
+       0))
+    ((TAPBoardFull (TAPStateGetBoard gameState))
+     0)
+    (#t
+     (TAPTryMoveIter
+       (TAPStateCreate
+         (TAPStateGetNextPlayer gameState)
+         (TAPBoardMarkMove
+           (TAPStateGetBoard gameState)
+           (TAPStateGetPlayer gameState)
+        move))
+       player
+       (TAPBoardRandomLegalMove (TAPStateGetBoard gameState))))))
+
+(define (TAPChooseLegal move)
+  (if (TAPLegalMoveP move)
+    move
+    (TAPChooseLegal (TAPRandomMove))))
 
 (define (TAPRandomMove)
   (+
     1
     (random (NUM_COLUMNS))))
 
+(define (TAPGlobalBoardFull)
+  (TAPBoardFull (TAPGetBoard)))
+
+(define (TAPGetLegalMoves board)
+  (TAPGetLegalMovesIter board 1))
+
+(define(TAPGetLegalMovesIter board column)
+  (if
+    (> column (NUM_COLUMNS))
+    '()
+    (if
+      (TAPBoardLegalMove
+        board
+        column)
+      (cons
+        column
+        (TAPGetLegalMovesIter
+          board
+          (+ column 1)))
+      (TAPGetLegalMovesIter
+        board
+        (+ column 1)))))
+
+
 
 ;------------------------------------------------------------------------------
 ; Win Determination Functions
 ;------------------------------------------------------------------------------
-
-(define (TAPWinBoard board player lastMove)
-  (or
-    (TAPWinVertical
-      board
-      player
-      lastMove)
-    (TAPWinHorizontal
-      board
-      player
-      lastMove)
-    (TAPWinDiagonalForwardSlash
-      board
-      player
-      lastMove)
-    (TAPWinDiagonalBackSlash
-      board
-      player
-      lastMove)
-    #f))
 
 (define (TAPWinVertical board player column)
   (winningNumber
@@ -499,31 +646,14 @@
           1)
         value))))
 
-(define (TAPBoardFull)
-  (TAPBoardFullBoard (TAPGetBoard)))
-
-(define (TAPBoardFullBoard board)
-  (TAPBoardFullIter board 1))
-
-(define (TAPBoardFullIter board column)
-  (if
-    (> column (NUM_COLUMNS))
-    #t
-    (and
-      (not (TAPLegalMoveBoard
-             board 
-             column))
-      (TAPBoardFullIter
-          board
-          (+ column 1)))))
-
-
 ; you can ignore this. it's for unit testing in racket
-(provide TAPGetBoard TAPGetCell TAPSetCell TAPSetListItem TAPStartGame
-         TAPMarkMove TAPMakeMove
-         TAPInitializeBoard TAPLegalMoveP TAPLegalMoveBoard TAPMarkMoveBoard
-         TAPFreeRowIndex TAPShowGame TAPRandomMove TAPWinBoard TAPWinVertical
+(provide TAPBoardFull TAPBoardLegalMove TAPBoardMarkMove TAPBoardWin 
+  
+         TAPGetBoard TAPGetCell TAPSetCell TAPSetListItem TAPStartGame
+         TAPMarkMove TAPMakeMove TAPGetPlayer TAPPreviousPlayer
+         TAPInitializeBoard TAPLegalMoveP 
+         TAPFreeRowIndex TAPShowGame TAPRandomMove TAPWinVertical
          TAPCountDown TAPWinHorizontal TAPNumLeft TAPNumRight TAPNumUpAndRight
          TAPNumDownAndLeft TAPWinDiagonalForwardSlash TAPNumDownAndRight
          TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP
-         TAPBoardFullBoard TAPBoardFull)
+         TAPGlobalBoardFull TAPGetLegalMoves TAPMakeMoveStatistical)

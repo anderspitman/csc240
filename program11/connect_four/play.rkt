@@ -2,10 +2,6 @@
 
 (require "connect_four.rkt")
 
-(display "Hi there")
-(newline)
-
-
 (define human #t)
 (define move 0)
 
@@ -40,12 +36,12 @@
         (TAPShowGame)))
     (if
       (TAPWinP move)
-       #t
+      (TAPGetPlayer)
       (manVsMachine))))
 
 (define (machineVsMachine)
   (begin
-    (TAPStartGame)
+    (TAPInitializeBoard)
     (machineVsMachineIter)))
 
 (define (machineVsMachineIter)
@@ -55,27 +51,53 @@
     (set! move (TAPMakeMove))
     (TAPMarkMove move)
     ;(TAPShowGame)
-    (if
-      (or
-        (TAPWinP move)
-        (TAPBoardFull))
-       #t
-      (machineVsMachineIter))))
+    (cond
+      ((TAPWinP move)
+       (TAPPreviousPlayer))
+      ((TAPGlobalBoardFull)
+       0)
+      (#t
+       (machineVsMachineIter)))))
 
-;(machineVsMachine)
+(define winner 0)
+(define player1WinCount 0)
+(define player2WinCount 1)
+(define tieCount 0)
 
 (define (runNTimes n)
   (begin
-    (display "n: ")
-    (display n)
-    (newline)
-    (machineVsMachine)
+    ;(display "n: ")
+    ;(display n)
+    ;(newline)
+    (set! winner (machineVsMachine))
+    (cond
+      ((= winner 1)
+       (set!
+         player1WinCount
+         (+ player1WinCount 1)))
+      ((= winner 2)
+       (set!
+         player2WinCount
+         (+ player2WinCount 1)))
+      ((= winner 0)
+       (set!
+         tieCount
+         (+ tieCount 1))))
     (if
       (= n 0)
-      #t
+      (begin
+        (display "Player 1 Wins: ")
+        (display player1WinCount)
+        (newline)
+        (display "Player 2 Wins: ")
+        (display player2WinCount)
+        (newline)
+        (display "Ties: ")
+        (display tieCount)
+        (newline))
       (runNTimes
         (- n 1)))))
 
 ;(manVsMan)
-
+;(machineVsMachine)
 (runNTimes 1000)

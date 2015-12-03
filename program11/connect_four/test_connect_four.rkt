@@ -136,16 +136,25 @@
     (2 1 1 2 2 1 1)
     (1 2 2 1 1 2 2)))
 
+(define
+  boardLegalMoves
+  '((2 0 1 0 2 0 0)
+    (1 2 2 1 1 2 2)
+    (2 1 1 2 2 1 1)
+    (1 2 2 1 1 2 2)
+    (2 1 1 2 2 1 1)
+    (1 2 2 1 1 2 2)))
+
 (define (PLAYER_ONE) 1)
 (define (PLAYER_TWO) 2)
 
 
-(check-equal? (TAPLegalMoveBoard smallBoardEmpty 1) #t)
-(check-equal? (TAPLegalMoveBoard smallBoardEmpty 2) #t)
-(check-equal? (TAPLegalMoveBoard smallboardFull 1) #f)
-(check-equal? (TAPLegalMoveBoard smallboardFull 2) #f)
-(check-equal? (TAPLegalMoveBoard smallboardAfterColumnOneSecondMove 1) #f)
-(check-equal? (TAPLegalMoveBoard smallboardAfterColumnOneSecondMove 2) #t)
+(check-equal? (TAPBoardLegalMove smallBoardEmpty 1) #t)
+(check-equal? (TAPBoardLegalMove smallBoardEmpty 2) #t)
+(check-equal? (TAPBoardLegalMove smallboardFull 1) #f)
+(check-equal? (TAPBoardLegalMove smallboardFull 2) #f)
+(check-equal? (TAPBoardLegalMove smallboardAfterColumnOneSecondMove 1) #f)
+(check-equal? (TAPBoardLegalMove smallboardAfterColumnOneSecondMove 2) #t)
 
 (check-equal? (TAPFreeRowIndex smallBoardEmpty 1) 2)
 (check-equal? (TAPFreeRowIndex smallboardAfterColumnOneFirstMove 1) 1)
@@ -160,10 +169,10 @@
 (check-equal? (TAPFreeRowIndex boardWinHorizontal 6) 6)
 
 (check-equal?
-  (TAPMarkMoveBoard smallBoardEmpty 1 1)
+  (TAPBoardMarkMove smallBoardEmpty 1 1)
   smallboardAfterColumnOneFirstMove)
 (check-equal?
-  (TAPMarkMoveBoard smallboardAfterColumnOneFirstMove 1 1)
+  (TAPBoardMarkMove smallboardAfterColumnOneFirstMove 1 1)
   smallboardAfterColumnOneSecondMove)
 
 
@@ -264,28 +273,32 @@
   (TAPWinDiagonalBackSlash boardWinDiagonalBackSlash (PLAYER_ONE) 4) #t)
 
 
-(check-equal? (TAPWinBoard boardWinVertical (PLAYER_ONE) 1) #t)
-(check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 1) #t)
-(check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 2) #t)
-(check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 3) #t)
-(check-equal? (TAPWinBoard boardWinHorizontal (PLAYER_ONE) 4) #t)
+(check-equal? (TAPBoardWin boardWinVertical (PLAYER_ONE) 1) #t)
+(check-equal? (TAPBoardWin boardWinHorizontal (PLAYER_ONE) 1) #t)
+(check-equal? (TAPBoardWin boardWinHorizontal (PLAYER_ONE) 2) #t)
+(check-equal? (TAPBoardWin boardWinHorizontal (PLAYER_ONE) 3) #t)
+(check-equal? (TAPBoardWin boardWinHorizontal (PLAYER_ONE) 4) #t)
 
-(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 1) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 2) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 3) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalForwardSlash (PLAYER_ONE) 4) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalForwardSlash (PLAYER_ONE) 1) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalForwardSlash (PLAYER_ONE) 2) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalForwardSlash (PLAYER_ONE) 3) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalForwardSlash (PLAYER_ONE) 4) #t)
 
-(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 1) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 2) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 3) #t)
-(check-equal? (TAPWinBoard boardWinDiagonalBackSlash (PLAYER_ONE) 4) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalBackSlash (PLAYER_ONE) 1) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalBackSlash (PLAYER_ONE) 2) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalBackSlash (PLAYER_ONE) 3) #t)
+(check-equal? (TAPBoardWin boardWinDiagonalBackSlash (PLAYER_ONE) 4) #t)
 
-(check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
-(check-equal? (TAPWinBoard boardWinVertical (PLAYER_TWO) 1) #f)
+(check-equal? (TAPBoardWin boardWinVertical (PLAYER_TWO) 1) #f)
+(check-equal? (TAPBoardWin boardWinVertical (PLAYER_TWO) 1) #f)
 
-(check-equal? (TAPWinBoard boardMoreThan4 (PLAYER_TWO) 4) #t)
+(check-equal? (TAPBoardWin boardMoreThan4 (PLAYER_TWO) 4) #t)
 
-(check-equal? (TAPBoardFullBoard boardFull) #t)
-(check-equal? (TAPBoardFullBoard boardEmpty) #f)
-(check-equal? (TAPBoardFullBoard boardWinVertical) #f)
-(check-equal? (TAPBoardFullBoard boardWinDiagonalForwardSlash) #f)
+(check-equal? (TAPBoardFull boardFull) #t)
+(check-equal? (TAPBoardFull boardEmpty) #f)
+(check-equal? (TAPBoardFull boardWinVertical) #f)
+(check-equal? (TAPBoardFull boardWinDiagonalForwardSlash) #f)
+
+(check-equal? (TAPGetLegalMoves boardLegalMoves) '(2 4 6 7))
+(check-equal? (TAPGetLegalMoves boardEmpty) '(1 2 3 4 5 6 7))
+(check-equal? (TAPGetLegalMoves boardFull) '())
