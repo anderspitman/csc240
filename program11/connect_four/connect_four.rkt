@@ -10,7 +10,7 @@
 (define (NUM_ROWS) 6)
 (define (NUM_COLUMNS) 7)
 (define (WIN_COUNT) 4)
-(define (NUM_ITERATIONS) 10)
+(define (NUM_ITERATIONS) 10000)
 
 
 ;------------------------------------------------------------------------------
@@ -241,6 +241,34 @@
           (cdr board)
           column)))))
 
+(define (TAPShowHistogram aList)
+  (if
+    (null? aList)
+    #t
+    (begin
+      (TAPShowBar (car aList))
+      (newline)
+      (TAPShowHistogram (cdr aList)))))
+
+(define (TAPShowBar value)
+  (TAPShowBarIter (TAPNumSymbols value)))
+
+(define (TAPShowBarIter numSymbols)
+  (if
+    (= numSymbols 0)
+    #t
+    (begin
+      (display "*")
+      (TAPShowBarIter
+        (- numSymbols 1)))))
+
+(define (TAPNumSymbols value)
+  (display value)
+  (round
+    (*
+      (/ value (NUM_ITERATIONS))
+      100)))
+
 
 ;------------------------------------------------------------------------------
 ; Move Decision Functions
@@ -257,12 +285,26 @@
     (null? moves)
     '()
     (cons
-      (TAPTryMove
+      (TAPTryMoveMultipleTimes
         gameState
-        (car moves))
+        (car moves)
+        (NUM_ITERATIONS))
       (TAPTryMoves
         gameState
         (cdr moves)))))
+
+(define (TAPTryMoveMultipleTimes gameState move numIterations)
+  (if
+    (= numIterations 0)
+    0
+    (+
+      (TAPTryMove
+        gameState
+        move)
+      (TAPTryMoveMultipleTimes
+        gameState
+        move
+        (- numIterations 1)))))
 
 (define (TAPTryMove gameState move)
   ;(display "Trying move: ") (display move) (newline)
@@ -656,4 +698,5 @@
          TAPCountDown TAPWinHorizontal TAPNumLeft TAPNumRight TAPNumUpAndRight
          TAPNumDownAndLeft TAPWinDiagonalForwardSlash TAPNumDownAndRight
          TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP
-         TAPGlobalBoardFull TAPGetLegalMoves TAPMakeMoveStatistical)
+         TAPGlobalBoardFull TAPGetLegalMoves TAPMakeMoveStatistical
+         TAPShowHistogram)
