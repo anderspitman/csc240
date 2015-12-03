@@ -275,10 +275,36 @@
 ;------------------------------------------------------------------------------
 
 (define (TAPMakeMoveStatistical)
-  (TAPTryMoves
-    (TAPGetGameState)
-    (TAPGetLegalMoves
-      (TAPGetBoard))))
+  (TAPBestMove))
+
+(define (TAPBestMove)
+  (TAPMax
+    (TAPTryMoves
+      (TAPGetGameState)
+      (TAPGetLegalMoves
+        (TAPGetBoard)))))
+
+(define (TAPMax theList)
+  (TAPMaxIter theList 0 1 1))
+
+(define (TAPMaxIter theList currentMax index maxIndex)
+  (if
+    (null? theList)
+    maxIndex
+    (if
+      (>
+        (car theList)
+        currentMax)
+      (TAPMaxIter
+        (cdr theList)
+        (car theList)
+        (+ index 1)
+        index)
+      (TAPMaxIter
+        (cdr theList)
+        currentMax
+        (+ index 1)
+        maxIndex))))
 
 (define (TAPTryMoves gameState moves)
   (if
@@ -699,4 +725,4 @@
          TAPNumDownAndLeft TAPWinDiagonalForwardSlash TAPNumDownAndRight
          TAPNumUpAndLeft TAPWinDiagonalBackSlash TAPWinP TAPWillWinP
          TAPGlobalBoardFull TAPGetLegalMoves TAPMakeMoveStatistical
-         TAPShowHistogram)
+         TAPShowHistogram TAPSetGameState TAPMax)

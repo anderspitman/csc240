@@ -19,6 +19,11 @@
 
 (define (manVsMachine)
   (begin
+    (TAPStartGame)
+    (manVsMachineIter)))
+
+(define (manVsMachineIter)
+  (begin
     (if human
       (begin
         (set! human #f)
@@ -31,13 +36,14 @@
         (set! human #t)
         (display "Automated move...")
         (newline)
-        (set! move (TAPMakeMove))
+        ;(set! move (TAPMakeMove))
+        (set! move (TAPMakeMoveStatistical))
         (TAPMarkMove move)
         (TAPShowGame)))
     (if
       (TAPWinP move)
       (TAPGetPlayer)
-      (manVsMachine))))
+      (manVsMachineIter))))
 
 (define (machineVsMachine)
   (begin
@@ -100,4 +106,5 @@
 
 ;(manVsMan)
 ;(machineVsMachine)
-(runNTimes 1000)
+(manVsMachine)
+;(runNTimes 1000)
