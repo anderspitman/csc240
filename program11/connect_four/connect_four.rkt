@@ -10,7 +10,7 @@
 (define (NUM_ROWS) 6)
 (define (NUM_COLUMNS) 7)
 (define (WIN_COUNT) 4)
-(define (NUM_ITERATIONS) 1000)
+(define (NUM_ITERATIONS) 2500)
 
 
 ;------------------------------------------------------------------------------
@@ -37,8 +37,9 @@
       (TAPBoardMarkMove
         (TAPGetBoard)
         (TAPGetPlayer)
-        column))
-    #f))
+        column)
+      column)
+    column))
 
 (define (TAPShowGame)
   (begin
@@ -52,7 +53,8 @@
     (TAPShowBoard (TAPGetBoard))))
 
 (define (TAPMakeMove)
-  (TAPChooseLegal (TAPRandomMove)))
+  (TAPMarkMove
+    (TAPMakeMoveStatistical)))
 
 (define (TAPLegalMoveP column)
   (TAPBoardLegalMove (TAPGetBoard) column))
@@ -175,12 +177,13 @@
 (define (TAPGetGameState)
   TAPGame)
 
-(define (TAPSetGameState nextPlayer board)
+(define (TAPSetGameState nextPlayer board lastMove)
   (set!
     TAPGame
     (TAPStateCreate
       nextPlayer
-      board)))
+      board))
+  lastMove)
 
 (define (TAPGetPlayer)
   (TAPStateGetPlayer TAPGame))
@@ -206,7 +209,8 @@
       (0 0 0 0 0 0 0)
       (0 0 0 0 0 0 0)
       (0 0 0 0 0 0 0)
-      (0 0 0 0 0 0 0))))
+      (0 0 0 0 0 0 0))
+    1))
 
 (define (TAPShowRow row)
   (if

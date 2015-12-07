@@ -37,9 +37,9 @@
         (set! human #t)
         (display "Automated move...")
         (newline)
-        ;(set! move (TAPMakeMove))
-        (set! move (TAPMakeMoveStatistical))
-        (TAPMarkMove move)
+        (set! move (TAPMakeMove))
+        ;(set! move (TAPMakeMoveStatistical))
+        ;(TAPMarkMove move)
         (TAPShowGame)))
     (if
       (TAPWinP move)
